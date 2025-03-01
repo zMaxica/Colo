@@ -13,7 +13,7 @@ local isScriptRunning = true -- เช็คสถานะการทำงา
 local firstTP = true  -- ใช้เช็กว่ากำลัง TP ไปหามอนตัวแรก
 
 -- 📌 ดีเลย์ 10 วินาทีก่อนเริ่มสคริปต์
-task.wait(10)
+task.wait(20)
 
 local camera = game.Workspace.CurrentCamera
 
@@ -58,7 +58,7 @@ local function checkBaseParts()
 
     print("📊 มอนที่ TP ไป: " .. initialPart.Name)
 
-    task.wait(30)  -- รอ 25 วินาที
+    task.wait(25)  -- รอ 25 วินาที
 
     -- ตรวจสอบว่า Part ของมอนที่ TP ไปยังอยู่ใน collectFolder หรือไม่
     if not collectFolder:FindFirstChild(initialPart.Name) then
@@ -241,19 +241,24 @@ local function onCharacterAdded(newCharacter)
     humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     
     isPartyCreated = false
-    firstTP = true -- รีเซ็ตค่า ให้ checkBaseParts ทำงานหลังตาย
-    task.wait(25) -- รอ 10 วินาทีก่อนเริ่ม Auto Farm อีกครั้ง
+    firstTP = false -- รีเซ็ตค่า ให้ checkBaseParts ทำงานหลังตาย
+    task.wait(1) -- รอ 1 วินาทีก่อนเริ่ม Auto Farm อีกครั้ง
     autoFarm()
+    
+    -- เริ่มฟังก์ชันใช้สกิลรัวๆ
+    task.spawn(useSkillRapidly)
 end
 
 -- สมัครฟังก์ชันให้ทำงานเมื่อเกิดใหม่
 player.CharacterAdded:Connect(onCharacterAdded)
 
+-- ถ้าตัวละครมีอยู่แล้ว ให้เรียก onCharacterAdded ทันที
+if player.Character then
+    onCharacterAdded(player.Character)
+end
+
 -- เริ่มฟังก์ชัน Auto Farm เมื่อเริ่มเกม
 autoFarm()
-
--- เริ่มฟังก์ชันใช้สกิลรัวๆ
-task.spawn(useSkillRapidly)
 
 -- เช็คเลือดดิจิม่อน
 task.spawn(function()
@@ -261,6 +266,6 @@ task.spawn(function()
         if checkPetHealthAndTeleport() then
             return
         end
-        task.wait(1) -- เช็คเลือดทุก 1 วินาที
+        task.wait(0.1) -- เช็คเลือดทุก 1 วินาที
     end
 end)
