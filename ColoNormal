@@ -74,14 +74,13 @@ local function checkBaseParts()
     end
 end
 
--- 📌 ฟังก์ชันตรวจสอบผู้เล่นใกล้เคียง
 local function checkNearbyPlayers()
     local detectionRadius = 10000 
     local excludedPlayers = {"zMaxikax", "DarkFalcon_Z"} -- ชื่อผู้เล่นที่ไม่ต้องการให้ตรวจจับ
 
     for _, otherPlayer in pairs(Players:GetPlayers()) do
         -- เช็คว่าไม่ใช่ผู้เล่นตัวเองและไม่ใช่ผู้เล่นที่อยู่ในลิสต์ที่ต้องการยกเว้น
-        if otherPlayer ~= player and not table.find(excludedPlayers, otherPlayer.Name) and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        if otherPlayer ~= player and not table.find(excludedPlayers, string.lower(otherPlayer.Name)) and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local otherCharacter = otherPlayer.Character
             local distance = (character.HumanoidRootPart.Position - otherCharacter.HumanoidRootPart.Position).Magnitude
 
@@ -94,7 +93,6 @@ local function checkNearbyPlayers()
     end
     return false 
 end
-
 
 -- 📌 ฟังก์ชันใช้สกิลรัวๆ
 local function useSkillRapidly()
