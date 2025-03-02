@@ -19,7 +19,7 @@ local function checkPlayerAndPetReady()
         end
 
         -- ถ้ายังไม่เจอให้รอ 1 วินาทีแล้วเช็คใหม่
-        wait(1)
+        wait(0.1)
     end
 end
 
