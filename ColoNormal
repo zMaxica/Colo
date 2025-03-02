@@ -125,7 +125,7 @@ local function autoFarm()
 
         -- ถ้าหามอนสเตอร์ไม่ได้ภายใน 8 วินาทีให้รีห้อง
         if not monsterFound then
-            if tick() - startTime > 8 then
+            if tick() - startTime > 13 then
                 warn("ไม่พบมอนสเตอร์ รีห้อง...")
                 createPartyAndRestart()  -- เรียกใช้ฟังก์ชันสร้างปาร์ตี้และรีห้อง
                 break
