@@ -81,23 +81,33 @@ end
 -- 📌 ฟังก์ชันคลิกและใช้สกิล
 local function clickDetectors()
     for _, part in pairs(workspace.Collect:GetChildren()) do
-        if part:IsA("Part") and part:FindFirstChild("Health") then
-            if part.Health.Value > 0 then
-                fireclickdetector(part:FindFirstChildWhichIsA("ClickDetector", true))
-            end
+        if part:IsA("Part") and part:FindFirstChild("Health") and part.Health.Value > 0 then
+            fireclickdetector(part:FindFirstChildWhichIsA("ClickDetector", true))
         end
     end
 end
 
 local function useSkill()
-            local args = {
-                [1] = 68889,
-                [2] = 14,
-                [3] = "3886291740644595.1340752",
-                [4] = false
-            }
-
-            game:GetService("Players").LocalPlayer.PlayerGui.CombatClient.Skill3:InvokeServer(unpack(args))
+    local currentMapID = game.PlaceId
+    local args
+    
+    if currentMapID == 110577167676254 then
+        args = {
+            [1] = 68889,
+            [2] = 14,
+            [3] = "3886291740644595.1340752",
+            [4] = false
+        }
+        game:GetService("Players").LocalPlayer.PlayerGui.CombatClient.Skill3:InvokeServer(unpack(args))
+    else
+        args = {
+            [1] = 4617,
+            [2] = 7,
+            [3] = "8359791740798128.694923",
+            [4] = false
+        }
+        game:GetService("Players").LocalPlayer.PlayerGui.CombatClient.Skill2:InvokeServer(unpack(args))
+    end
 end
 
 -- 📌 ฟังก์ชันสร้างปาร์ตี้และรีห้อง
