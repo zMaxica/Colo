@@ -1,40 +1,25 @@
 -- ATF DDM by SleepyUncle
-local player = game.Players.LocalPlayer
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local TeleportService = game:GetService("TeleportService")
-local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 local mapIDs = {86392425558311, 80299472659017, 120958789962854, 76011326497329, 110577167676254} -- map IDs ที่จะใช้ฟาร์ม
 local safeZonePosition = CFrame.new(467.62384033203125, 315.87823486328125, -109.36079406738281)
 
 -- 📌 รอให้ LocalPlayer โหลดเสร็จ
-local Players = game:GetService("Players")
-local player
-
-repeat
-    player = Players.LocalPlayer
+while not player do
+    player = game:GetService("Players").LocalPlayer
     wait()
-until player
+end
 
--- 📌 ฟังก์ชันตรวจสอบผู้เล่นและดิจิม่อนของผู้เล่น (รอจนกว่าพร้อม)
+-- 📌 ฟังก์ชันตรวจสอบผู้เล่นและดิจิม่อนของผู้เล่น
 local function checkPlayerAndPetReady()
     local character
     repeat
         character = player.Character or player.CharacterAdded:Wait()
         wait(0.1)
-    until character
-
-    local rootPart
-    repeat
-        rootPart = character:FindFirstChild("HumanoidRootPart")
-        wait(0.1)
-    until rootPart
-
-    local pet
-    repeat
-        pet = rootPart:FindFirstChild("pet1")
-        wait(0.1)
-    until pet
+    until character:FindFirstChild("HumanoidRootPart") and character.HumanoidRootPart:FindFirstChild("pet1")
 
     print("✔ ผู้เล่นและดิจิม่อนพร้อมแล้ว! เริ่มรันสคริปต์...")
     return true
@@ -56,7 +41,7 @@ local function checkNearbyPlayers()
     local detectionRadius = 10000
     local excludedPlayers = {"zMaxikax", "DarkFalcon_Z"}
 
-    for _, otherPlayer in pairs(Players:GetPlayers()) do
+    for _, otherPlayer in pairs(Players:GetPlayers()) do  -- เปลี่ยนจาก game.Players เป็น Players
         if otherPlayer ~= player and not table.find(excludedPlayers, string.lower(otherPlayer.Name)) and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local otherCharacter = otherPlayer.Character
             local distance = (player.Character.HumanoidRootPart.Position - otherCharacter.HumanoidRootPart.Position).Magnitude
@@ -87,6 +72,9 @@ local function checkPetHealth()
                 game:GetService("Players").LocalPlayer.PlayerGui.CombatClient.CallDigimon:InvokeServer(unpack(args))
                 wait(0.1)
             end
+            -- รอเวลาสักครู่ ก่อนเริ่มฟาร์มใหม่
+            task.wait(18)
+            print("⏳ ครบ 18 วินาทีแล้ว เริ่มฟาร์มต่อ...")
             return true -- ระบุว่าให้หยุดฟาร์มชั่วคราว
         end
     end
@@ -166,7 +154,7 @@ local function autoFarm()
                     end
                     task.wait(18)
                     print("⏳ ครบ 18 วินาทีแล้ว เริ่มฟาร์มต่อ...")
-                    autoFarm()  -- เรียกฟังก์ชันใหม่
+                    break  -- ออกจากการวนลูปเมื่อเรียกดิจิม่อนกลับ
                 else
                     -- ส่งดิจิม่อนออกไปโจมตีและใช้สกิล
                     clickDetectors()
