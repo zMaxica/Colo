@@ -8,18 +8,33 @@ local mapIDs = {86392425558311, 80299472659017, 120958789962854, 76011326497329,
 local safeZonePosition = CFrame.new(467.62384033203125, 315.87823486328125, -109.36079406738281)
 
 -- 📌 รอให้ LocalPlayer โหลดเสร็จ
-while not player do
-    player = game:GetService("Players").LocalPlayer
-    wait()
-end
+local Players = game:GetService("Players")
+local player
 
--- 📌 ฟังก์ชันตรวจสอบผู้เล่นและดิจิม่อนของผู้เล่น
+repeat
+    player = Players.LocalPlayer
+    wait()
+until player
+
+-- 📌 ฟังก์ชันตรวจสอบผู้เล่นและดิจิม่อนของผู้เล่น (รอจนกว่าพร้อม)
 local function checkPlayerAndPetReady()
     local character
     repeat
         character = player.Character or player.CharacterAdded:Wait()
         wait(0.1)
-    until character:FindFirstChild("HumanoidRootPart") and character.HumanoidRootPart:FindFirstChild("pet1")
+    until character
+
+    local rootPart
+    repeat
+        rootPart = character:FindFirstChild("HumanoidRootPart")
+        wait(0.1)
+    until rootPart
+
+    local pet
+    repeat
+        pet = rootPart:FindFirstChild("pet1")
+        wait(0.1)
+    until pet
 
     print("✔ ผู้เล่นและดิจิม่อนพร้อมแล้ว! เริ่มรันสคริปต์...")
     return true
