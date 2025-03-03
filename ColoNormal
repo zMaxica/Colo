@@ -13,17 +13,36 @@ while not player do
     wait()
 end
 
--- 📌 ฟังก์ชันตรวจสอบผู้เล่นและดิจิม่อนของผู้เล่น
+-- 📌 ฟังก์ชันตรวจสอบความพร้อมของทุกอย่าง
 local function checkPlayerAndPetReady()
     local character
     repeat
         character = player.Character or player.CharacterAdded:Wait()
         wait(0.1)
     until character:FindFirstChild("HumanoidRootPart") and character.HumanoidRootPart:FindFirstChild("pet1")
-
+           and player:FindFirstChild("PlayerGui") and player.PlayerGui:FindFirstChild("CombatClient")
+           and ReplicatedStorage:FindFirstChild("PartySystemRE")
+    
+    -- ตรวจสอบว่า CombatClient และ PartySystemRE พร้อมใช้งานหรือไม่
+    local combatClient = player.PlayerGui.CombatClient
+    local partySystem = ReplicatedStorage.PartySystemRE
+    if not combatClient or not partySystem then
+        warn("⚠ CombatClient หรือ PartySystemRE ยังไม่พร้อมใช้งาน!")
+        return false
+    end
+    
     print("✔ ผู้เล่นและดิจิม่อนพร้อมแล้ว! เริ่มรันสคริปต์...")
     return true
 end
+
+-- 📌 เริ่มต้นการทำงาน
+if checkPlayerAndPetReady() then
+    -- เริ่มรันสคริปต์เมื่อทุกอย่างพร้อม
+    print("เริ่มทำงานแล้ว")
+else
+    print("ไม่สามารถเริ่มการทำงานได้เนื่องจากบางส่วนยังไม่พร้อม")
+end
+
 
 -- 📌 ฟังก์ชันเช็ค Map ID
 local function checkMapID()
@@ -56,30 +75,34 @@ local function checkNearbyPlayers()
     return false
 end
 
--- 📌 ฟังก์ชันเช็คเลือดดิจิม่อนและเรียกกลับ
+-- ฟังก์ชันเช็คเลือดดิจิม่อนและเรียกกลับ
 local function checkPetHealth()
-    local pet = player.Character:FindFirstChild("HumanoidRootPart").pet1
-    if pet and pet.Stats.Health then
-        local healthStat = pet.Stats.Health
-        local maxHealthStat = pet.Stats.HealthMax
+    local humanoidRootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart then
+        local pet = humanoidRootPart:FindFirstChild("pet1")  -- ตรวจสอบว่ามี pet1 อยู่ใน HumanoidRootPart หรือไม่
+        if pet and pet:FindFirstChild("Stats") and pet.Stats:FindFirstChild("Health") then
+            local healthStat = pet.Stats.Health
+            local maxHealthStat = pet.Stats.HealthMax
 
-        if healthStat.Value / maxHealthStat.Value < 0.6 then
-            print("⚠ เลือดดิจิม่อนต่ำกว่า 60% → เรียกดิจิม่อนกลับ")
-            
-            -- เรียกดิจิม่อนกลับ
-            for i = 1, 5 do
-                local args = { [1] = "9566301740688870.6489878", [2] = false }
-                game:GetService("Players").LocalPlayer.PlayerGui.CombatClient.CallDigimon:InvokeServer(unpack(args))
-                wait(0.1)
+            if healthStat.Value / maxHealthStat.Value < 0.6 then
+                print("⚠ เลือดดิจิม่อนต่ำกว่า 60% → เรียกดิจิม่อนกลับ")
+                
+                -- เรียกดิจิม่อนกลับ
+                for i = 1, 5 do
+                    local args = { [1] = "9566301740688870.6489878", [2] = false }
+                    game:GetService("Players").LocalPlayer.PlayerGui.CombatClient.CallDigimon:InvokeServer(unpack(args))
+                    wait(0.1)
+                end
+                -- รอเวลาสักครู่ ก่อนเริ่มฟาร์มใหม่
+                task.wait(15)
+                print("⏳ ครบ 15 วินาทีแล้ว เริ่มฟาร์มต่อ...")
+                return true -- ระบุว่าให้หยุดฟาร์มชั่วคราว
             end
-            -- รอเวลาสักครู่ ก่อนเริ่มฟาร์มใหม่
-            task.wait(18)
-            print("⏳ ครบ 18 วินาทีแล้ว เริ่มฟาร์มต่อ...")
-            return true -- ระบุว่าให้หยุดฟาร์มชั่วคราว
         end
     end
     return false -- ถ้าเลือดมากกว่า 60% ให้ทำฟาร์มต่อ
 end
+
 
 -- 📌 ฟังก์ชันคลิกและใช้สกิล
 local function clickDetectors()
@@ -124,7 +147,7 @@ local function createPartyAndRestart()
     print("รีห้องแล้วและเริ่มปาร์ตี้ใหม่")
 end
 
--- 📌 ฟังก์ชันออโต้ฟาร์ม
+-- ฟังก์ชันออโต้ฟาร์ม
 local function autoFarm()
     if not checkMapID() then return end  -- ถ้าไม่ตรงกับ Map ID ที่กำหนดจะไม่ทำการฟาร์ม
 
@@ -183,7 +206,8 @@ local function autoFarm()
         
         -- เช็คเลือดดิจิม่อน
         if checkPetHealth() then
-            break
+            -- หากเลือดดิจิม่อนต่ำกว่า 60% และเรียกกลับแล้ว ทำให้ฟาร์มกลับมาเริ่มต่อ
+            continue
         end
 
         wait(0.1) -- ปรับเวลาตามต้องการ
