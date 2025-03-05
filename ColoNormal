@@ -43,6 +43,20 @@ else
     print("ไม่สามารถเริ่มการทำงานได้เนื่องจากบางส่วนยังไม่พร้อม")
 end
 
+-- 📌 ฟังก์ชันสำหรับวาร์ปไปยังแมพที่ต้องการ
+local function teleportToMap(mapID)
+    game:GetService("TeleportService"):Teleport(mapID, game:GetService("Players").LocalPlayer)
+end
+
+-- 📌 ฟังก์ชันจัดการการเปลี่ยนแมพ
+local function handleMapTransition(currentMapID)
+    if currentMapID == 133649758958568 then
+        teleportToMap(110577167676254)
+    end
+end
+
+-- 📌 เรียกใช้ฟังก์ชัน (ใช้งานจริง)
+handleMapTransition(game.PlaceId)
 
 -- 📌 ฟังก์ชันเช็ค Map ID
 local function checkMapID()
@@ -194,7 +208,7 @@ local function autoFarm()
         if not monsterFound then
             if tick() - startTime > 10 then
                 warn("ไม่พบมอนสเตอร์ รีห้อง...")
-                createPartyAndRestart()  -- เรียกใช้ฟังก์ชันสร้างปาร์ตี้และรีห้อง
+                TeleportService:Teleport(133649758958568, player) -- ย้ายไปแมพแรก
                 break
             end
         else
