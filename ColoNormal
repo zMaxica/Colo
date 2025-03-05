@@ -234,7 +234,13 @@ local function autoFarm()
         if not monsterFound then
             if tick() - startTime > 10 then
                 warn("ไม่พบมอนสเตอร์ รีห้อง...")
-                TeleportService:Teleport(133649758958568, player) -- ย้ายไปแมพเดิม
+                local args = {
+    [1] = 75,
+    [2] = "Village of The Beginning"
+}
+
+game:GetService("ReplicatedStorage").TeleportHandler.TeleportEvent:InvokeServer(unpack(args))
+
                 break
             end
         else
