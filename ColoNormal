@@ -64,9 +64,11 @@ local function handleMapTransition(currentMapID)
     end
 end
 
--- 📌 เรียกใช้ฟังก์ชัน (ใช้งานจริง)
-handleMapTransition(game.PlaceId)
-
+-- 📌 รอจนกว่า Player จะถูกเพิ่มเข้ามาในเกม
+game:GetService("Players").PlayerAdded:Connect(function(player)
+    -- เมื่อผู้เล่นเข้ามาแล้ว ให้ตรวจสอบ PlaceId และทำการวาร์ป
+    handleMapTransition(game.PlaceId)
+end)
 
 -- 📌 ฟังก์ชันเช็ค Map ID
 local function checkMapID()
