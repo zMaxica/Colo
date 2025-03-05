@@ -234,7 +234,7 @@ local function autoFarm()
         if not monsterFound then
             if tick() - startTime > 10 then
                 warn("ไม่พบมอนสเตอร์ รีห้อง...")
-                TeleportService:Teleport(133649758958568, player) -- ย้ายไปแมพแรก
+                TeleportService:Teleport(110577167676254, player) -- ย้ายไปแมพเดิม
                 break
             end
         else
