@@ -56,7 +56,7 @@ local function teleportToMap(mapID)
         print("การวาร์ปไปยังแมพ " .. mapID .. " สำเร็จ!")
     end
 end
-
+-----------------------------------------
 -- 📌 ฟังก์ชันจัดการการเปลี่ยนแมพ
 local function handleMapTransition(currentMapID)
     if currentMapID == 133649758958568 then
@@ -66,11 +66,23 @@ end
 
 -- 📌 รอจนกว่า Player จะถูกเพิ่มเข้ามาในเกม
 game:GetService("Players").PlayerAdded:Connect(function(player)
-    -- เมื่อผู้เล่นเข้ามาแล้ว ให้ตรวจสอบ PlaceId และทำการวาร์ป
+    -- รอให้ PlaceId อัพเดตและเช็คการเปลี่ยนแปลง
+    wait(2)  -- รอให้ระบบโหลดและ PlaceId อัพเดต
     handleMapTransition(game.PlaceId)
 end)
 
 -- 📌 ฟังก์ชันเช็ค Map ID
+local function checkMapID()
+    local currentMapID = game.PlaceId
+    for _, id in ipairs(mapIDs) do
+        if currentMapID == id then
+            return true
+        end
+    end
+    return false
+end
+
+------- 📌 ฟังก์ชันเช็ค Map ID
 local function checkMapID()
     local currentMapID = game.PlaceId
     for _, id in ipairs(mapIDs) do
